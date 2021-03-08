@@ -29,5 +29,6 @@ module.exports = {
     'import/extensions': 'off',
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'import/prefer-default-export': 'off',
   },
 }
