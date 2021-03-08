@@ -24,7 +24,7 @@ class WeatherService {
       })
     )
     const allTemps = WeatherService.apiResponseToFlatTempsPerHour(apiResponses, numberOfDays)
-    const precision = 2
+    const precision = 1
     const max = _.round(_.max(allTemps) || 0, precision)
     const min = _.round(_.min(allTemps) || 0, precision)
     const average = _.round(_.mean(allTemps), precision)
