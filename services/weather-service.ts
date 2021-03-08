@@ -14,7 +14,14 @@ interface PeriodStatistics {
 class WeatherService {
   constructor(private readonly openWeatherMapClient: OpenWeatherMapClient) {}
 
+  /**
+   * returns an object containing `min`, `max`, `average` and `median` of temperatures of the last `numberOfDays` (at least 1 day).
+   * One day is defined as 24 hours, i.e. if `numberOfDays` is 4, statistics of the last 96 hours are returned
+   */
   public async statisticsForNumberOfDays(numberOfDays: number): Promise<PeriodStatistics> {
+    if (numberOfDays === 0) {
+      throw new Error('must request at least 1 day')
+    }
     const days = WeatherService.timestampsInterval(numberOfDays + 1)
     const apiResponses = await Promise.all(
       days.map((day) => {
@@ -33,37 +40,31 @@ class WeatherService {
   }
 
   /**
-   *
-   * @param days the number of days back that should be included in the interval
-   * @param naturalOrder should the interval be returned in a chronological order, defaults to true
-   * @param start the day in which the interval start. Should be given as unix milliseconds, defaults to today
+   * returns an array with the timestamps of 00:00 each day starting from `start` (defaults to today) going back `days` number of days
    */
-  private static timestampsInterval(
-    days: number,
-    naturalOrder = true,
-    start = dayjs().startOf('day')
-  ): number[] {
+  private static timestampsInterval(days: number, start = dayjs().startOf('day')): number[] {
     const interval = []
     let current = start
     for (let i = 0; i < days; i += 1) {
       interval.push(+current)
       current = current.subtract(1, 'day')
     }
-    return naturalOrder ? _.reverse(interval) : interval
+    return _.reverse(interval)
   }
 
+  /**
+   * returns an array with the temperatures for the last 24 * `numberOfDays` hours given an array of WeatherApiResponses
+   */
   private static apiResponseToFlatTempsPerHour(
     responses: WeatherApiResponse[],
-    numberOfDays: number,
-    even24Hours = true
+    numberOfDays: number
   ): number[] {
     const tempsByDay = responses.map((response) => response.hourly.map((hourly) => hourly.temp))
     const allTemps = _.flattenDeep(tempsByDay)
-    if (even24Hours) {
-      const hoursInADay = 24
-      const excessDaysInFirstDay = allTemps.length - hoursInADay * numberOfDays
-      allTemps.splice(0, excessDaysInFirstDay)
-    }
+
+    const hoursInADay = 24
+    const excessDaysInFirstDay = allTemps.length - hoursInADay * numberOfDays
+    allTemps.splice(0, excessDaysInFirstDay)
     return allTemps
   }
 }
