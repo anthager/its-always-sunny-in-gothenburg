@@ -19,7 +19,7 @@ interface IndexProps {
   median: number
 }
 
-const TABLE_CELL = 'px-3 capitalize'
+const TITLE_CELL = 'capitalize font-semibold'
 
 const Index = ({ max, min, average, median }: IndexProps): JSX.Element => {
   return (
