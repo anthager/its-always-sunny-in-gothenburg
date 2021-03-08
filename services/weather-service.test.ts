@@ -14,6 +14,7 @@ describe('WeatherApiService', () => {
       min: 1,
       average: 1,
       max: 1,
+      median: 1,
     }
     const dataDay1 = {
       hourly: new Array(24).fill({ temp: 0 }),
@@ -37,6 +38,7 @@ describe('WeatherApiService', () => {
       min: 0,
       average: 0.5,
       max: 1,
+      median: 0.5,
     }
     const dataDay1 = {
       hourly: new Array(24).fill({ temp: 0 }),

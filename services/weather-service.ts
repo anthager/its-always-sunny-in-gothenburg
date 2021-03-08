@@ -2,11 +2,13 @@ import dayjs from 'dayjs'
 import _ from 'lodash'
 import OpenWeatherMapClient from '../clients/open-weather-map-client'
 import { WeatherApiResponse } from '../types/weather'
+import { median } from '../utils/median'
 
 interface PeriodStatistics {
   max: number
   min: number
   average: number
+  median: number
 }
 
 class WeatherService {
@@ -26,7 +28,8 @@ class WeatherService {
     const max = _.round(_.max(allTemps) || 0, precision)
     const min = _.round(_.min(allTemps) || 0, precision)
     const average = _.round(_.mean(allTemps), precision)
-    return { max, min, average }
+    const med = _.round(median(allTemps), precision)
+    return { max, min, average, median: med }
   }
 
   /**
